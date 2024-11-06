@@ -1,0 +1,1 @@
+console.log('DEBUG: popup.js loaded');
