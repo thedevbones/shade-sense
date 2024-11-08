@@ -1,4 +1,3 @@
-//import chroma from "chroma-js";
 
 let color = false;
 let bg = false;

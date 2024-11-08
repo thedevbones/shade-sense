@@ -15,7 +15,7 @@
           "https://*/*"
         ],
         "js": [
-          "lib/chroma/src/chroma.js",
+          "lib/chroma.min.js",
           "shade.js"
         ]
       }
