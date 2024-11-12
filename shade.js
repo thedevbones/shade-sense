@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener(
         color = true;
       }
     }
-    if (request.makeDark === "darkdark"){
+    if (request.makeDark === "darkdark") {
       if (bg){
         document.body.style.backgroundColor = "transparent";
         bg = false;
@@ -24,6 +24,12 @@ chrome.runtime.onMessage.addListener(
         document.body.style.backgroundColor = "black";
         bg = true;
       }
+    }
+  
+//this will apply the overlay color from color picker
+if (request.overlayColor) {
+  document.body.style.backgroundColor = request.overlayColor;
+  bg = true;
     }
   }
 );
