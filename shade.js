@@ -35,14 +35,14 @@ if (request.overlayColor) {
 );
 
 function addColor() {
-  const filterImage = document.querySelectorAll("img, video"); // what else?
+  const filterImage = document.querySelectorAll("img, video, canvas, svg, iframe, object"); // what else?
   for (let i = 0; i < filterImage.length; i++) {
     filterImage[i].style.filter = "grayscale(100%)";
   }
 }
 
 function removeColor() {
-  const filterImage = document.querySelectorAll("img, video");
+  const filterImage = document.querySelectorAll("img, video, canvas, svg, iframe, object");
   for (let i = 0; i < filterImage.length; i++) {
     filterImage[i].style.filter = "none";
   }
