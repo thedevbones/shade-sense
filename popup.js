@@ -1,16 +1,31 @@
-
-document.getElementById("toggleButton").addEventListener("click", function() {
-    chrome.tabs.query({
-      active: true, 
-      currentWindow: true
-    }, function (queryTabs) {
-      let currTab = queryTabs[0];
-      chrome.tabs.sendMessage(
-        currTab.id, { 
-          thisOne: "changeColor",
-        });
-    });
+//Deuteranomaly event listener
+document.getElementById("deuteranomaly").addEventListener("click", function() {
+  chrome.tabs.query({
+    active: true, 
+    currentWindow: true
+  }, function (queryTabs) {
+    let currTab = queryTabs[0];
+    chrome.tabs.sendMessage(
+      currTab.id, { 
+        thisOne: "applyDeuteranomaly",
+      });
   });
+});
+
+
+//Protanomaly event listener
+document.getElementById("protanomaly").addEventListener("click", function() {
+  chrome.tabs.query({
+    active: true, 
+    currentWindow: true
+  }, function (queryTabs) {
+    let currTab = queryTabs[0];
+    chrome.tabs.sendMessage(
+      currTab.id, { 
+        thisOne: "applyProtanomaly",
+      });
+  });
+});
   
   document.getElementById("darkMode").addEventListener("click", function() {
     chrome.tabs.query({
