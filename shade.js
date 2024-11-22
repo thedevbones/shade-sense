@@ -1,29 +1,8 @@
-
-let color = false;
-let bg = false;
-
-//let chromaColor = chroma('hotpink');
-
 chrome.runtime.onMessage.addListener(
 
   function (request, sender, sendResponse) {
     if (request.simulation === "deuteranomaly") {
       applyDeuteranomaly();
-    }
-    if (request.darkMode === true) {
-      if (bg){
-        document.body.style.backgroundColor = "transparent";
-        bg = false;
-      } else {
-        document.body.style.backgroundColor = "black";
-        bg = true;
-      }
-    }
-  
-//this will apply the overlay color from color picker
-if (request.overlayColor) {
-  document.body.style.backgroundColor = request.overlayColor;
-  bg = true;
     }
   }
 );
