@@ -10,6 +10,15 @@ chrome.runtime.onMessage.addListener(
     if (request.simulation === "tritanomaly") {
       applyTritanomaly();
     }
+    if (request.daltonize === "deuteranomaly") {
+      daltonizeDeut();
+    }
+    if (request.daltonize === "protanomaly") {
+      daltonizeProt();
+    }
+    if (request.daltonize === "tritanomaly") {
+      daltonizeTrit();
+    }
   }
 );
 
@@ -253,5 +262,232 @@ function toTritanomaly(srcImage) {
 /* ******************************************************************************************
 
   End of Tritanomaly Simulator
+
+********************************************************************************************* */
+
+
+/* ******************************************************************************************
+
+  Deuteranomaly Daltonize
+
+********************************************************************************************* */
+
+function daltonizeDeut() {
+  const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
+
+  for (let i = 0; i < filterImages.length; i++) {
+    const oneImage = filterImages[i];
+
+    oneImage.crossOrigin = "Anonymous";
+
+    daltDeut(oneImage);
+  }
+}
+
+function daltDeut(srcImage) {
+
+  const draw = document.createElement("canvas");
+
+  draw.width = srcImage.naturalWidth;
+  draw.height = srcImage.naturalHeight;
+
+  if (draw.width == 0 || draw.height == 0) {
+    return;
+  }
+
+  const context = draw.getContext("2d");
+
+  context.drawImage(srcImage, 0, 0);
+
+  const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
+
+  let rgb = grabCanvas.data;
+
+  if (srcImage.origrgb != undefined) {
+    rgb = srcImage.origrgb.slice();
+  } else {
+    srcImage.origrgb = rgb.slice();
+  }
+
+  for (let i = 0; i < rgb.length; i += 4) {
+    const red = rgb[i];
+    const green = rgb[i + 1];
+    const blue = rgb[i + 2];
+
+    //FIX: NEED TO ADD PROPER VALUES
+    const newRed = 0 * red + 0 * green + 0 * blue;
+    const newGreen = 0 * red + 0 * green + 0 * blue;
+    const newBlue = 0 * red + 0 * green + 0 * blue;
+
+    rgb[i] = newRed;
+    rgb[i + 1] = newGreen;
+    rgb[i + 2] = newBlue;
+  }
+
+  context.putImageData(grabCanvas, 0, 0);
+
+  srcImage.onload = function () {
+    try {
+      context.drawImage(srcImage, 0, 0);
+    } catch (e) {
+      console.error("error", e);
+    }
+
+  };
+
+  srcImage.src = draw.toDataURL();
+}
+
+/* ******************************************************************************************
+
+  End of Deuteranomaly Daltonize
+
+********************************************************************************************* */
+
+/* ******************************************************************************************
+
+  Protanomaly Daltonize
+
+********************************************************************************************* */
+
+function daltonizeProt() {
+  const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
+
+  for (let i = 0; i < filterImages.length; i++) {
+    const oneImage = filterImages[i];
+
+    oneImage.crossOrigin = "Anonymous";
+
+    daltProt(oneImage);
+
+  }
+}
+
+function daltProt(srcImage) {
+
+  const draw = document.createElement("canvas");
+
+  draw.width = srcImage.naturalWidth;
+  draw.height = srcImage.naturalHeight;
+
+  if (draw.width == 0 || draw.height == 0) {
+    return;
+  }
+
+  const context = draw.getContext("2d");
+
+  context.drawImage(srcImage, 0, 0);
+
+  const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
+
+  var rgb = grabCanvas.data;
+
+  for (let i = 0; i < rgb.length; i += 4) {
+    const red = rgb[i];
+    const green = rgb[i + 1];
+    const blue = rgb[i + 2];
+
+    //FIX: NEED TO ADD PROPER VALUES
+    const newRed = 0 * red + 0 * green + 0 * blue;
+    const newGreen = 0 * red + 0 * green + 0 * blue;
+    const newBlue = 0 * red + 0 * green + 0 * blue;
+
+    rgb[i] = newRed;
+    rgb[i + 1] = newGreen;
+    rgb[i + 2] = newBlue;
+  }
+
+  context.putImageData(grabCanvas, 0, 0);
+
+  srcImage.onload = function () {
+    try {
+      context.drawImage(srcImage, 0, 0);
+    } catch (e) {
+      console.error("error", e);
+    }
+
+  };
+
+  srcImage.src = draw.toDataURL();
+
+}
+
+/* ******************************************************************************************
+
+  End of Protanomaly Daltonize
+
+********************************************************************************************* */
+
+/* ******************************************************************************************
+
+  Tritanomaly Daltonize
+
+********************************************************************************************* */
+
+function daltonizeTrit() {
+  const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
+
+  for (let i = 0; i < filterImages.length; i++) {
+    const oneImage = filterImages[i];
+
+    oneImage.crossOrigin = "Anonymous";
+
+    daltTrit(oneImage);
+
+  }
+}
+
+function daltTrit(srcImage) {
+
+  const draw = document.createElement("canvas");
+
+  draw.width = srcImage.naturalWidth;
+  draw.height = srcImage.naturalHeight;
+
+  if (draw.width == 0 || draw.height == 0) {
+    return;
+  }
+
+  const context = draw.getContext("2d");
+
+  context.drawImage(srcImage, 0, 0);
+
+  const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
+
+  var rgb = grabCanvas.data;
+
+  for (let i = 0; i < rgb.length; i += 4) {
+    const red = rgb[i];
+    const green = rgb[i + 1];
+    const blue = rgb[i + 2];
+
+    //FIX: NEED TO ADD PROPER VALUES
+    const newRed = 0 * red + 0 * green + 0 * blue;
+    const newGreen = 0 * red + 0 * green + 0 * blue;
+    const newBlue = 0 * red + 0 * green + 0 * blue;
+
+    rgb[i] = newRed;
+    rgb[i + 1] = newGreen;
+    rgb[i + 2] = newBlue;
+  }
+
+  context.putImageData(grabCanvas, 0, 0);
+
+  srcImage.onload = function () {
+    try {
+      context.drawImage(srcImage, 0, 0);
+    } catch (e) {
+      console.error("error", e);
+    }
+
+  };
+
+  srcImage.src = draw.toDataURL();
+
+}
+
+/* ******************************************************************************************
+
+  End of Tritanomaly Daltonize
 
 ********************************************************************************************* */
