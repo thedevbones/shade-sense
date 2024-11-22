@@ -47,3 +47,10 @@ document.getElementById("protanomaly").addEventListener("click", function() {
         chrome.tabs.sendMessage(currTab.id, { overlayColor: event.target.value });
     });
 });
+// Function for sending a message to the active tab
+function sendMessageToActiveTab(message) {
+  chrome.tabs.query({ active: true, currentWindow: true }, function(queryTabs) {
+    let currTab = queryTabs[0];
+    chrome.tabs.sendMessage(currTab.id, message);
+  });
+}
