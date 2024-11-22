@@ -4,6 +4,9 @@ chrome.runtime.onMessage.addListener(
     if (request.simulation === "deuteranomaly") {
       applyDeuteranomaly();
     }
+    if (request.simulation === "protanomaly") {
+      applyProtanomaly();
+    }
   }
 );
 
@@ -18,52 +21,40 @@ function applyDeuteranomaly() {
 
   for (let i = 0; i < filterImages.length; i++) {
     const oneImage = filterImages[i];
-    
+
     //https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image
     //because of cors error
     oneImage.crossOrigin = "Anonymous";
 
-    //https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Manipulating_video_using_canvas
-    //drawImage, getImageData,putImageData built in functions
-    oneImage.onload = function () {
-      //fails without try-catch because image has not loaded
-      try {
-        //on load we want to draw (drawImage, getImageData)
-        const thisImage = drawCanvas(oneImage);
-        //create the rgb value, how to apply the changes (putImageData)
-        const changeDeuter = toDeuteranomaly(thisImage, oneImage);
-
-      } catch (e) {
-        console.error("error line 53", e);
-      }
-    };
+    toDeuteranomaly(oneImage);
   }
 }
 
-function drawCanvas(image) {
+function toDeuteranomaly(srcImage) {
 
-  //https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Using_images
-  //create canvas
   const draw = document.createElement("canvas");
-  const ctx = draw.getContext("2d");
 
-  //https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage
-  //setting the drawing dimensions
-  draw.width = image.naturalWidth;
-  draw.height = image.naturalHeight;
-  //drawImage(image, x, y, width, height)
-  //draw image on coordinate
-  ctx.drawImage(image, 0, 0);
+  draw.width = srcImage.naturalWidth;
+  draw.height = srcImage.naturalHeight;
 
-  //https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
-  //to grab the canvas to return
-  const grabCanvas = ctx.getImageData(0, 0, draw.width, draw.height);
+  if (draw.width == 0 || draw.height == 0) {
+    return;
+  }
 
-  return grabCanvas;
-}
+  const context = draw.getContext("2d");
 
-function toDeuteranomaly(oneImage, srcImage) {
-  const rgb = oneImage.data;
+  context.drawImage(srcImage, 0, 0);
+
+  const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
+
+  let rgb = grabCanvas.data;
+
+  if (srcImage.origrgb != undefined) {
+    rgb = srcImage.origrgb.slice();
+  } else {
+    srcImage.origrgb = rgb.slice();
+  }
+
   /*
   const deuterMatrix = {
     deuter: [
@@ -75,7 +66,7 @@ function toDeuteranomaly(oneImage, srcImage) {
 
   //https://medium.com/@bantic/hand-coding-a-color-wheel-with-canvas-78256c9d7d43
   //every 4th pixels for "full alpha", alpha channel
-  for (let i = 0; i < rgb.length; i+=4) {
+  for (let i = 0; i < rgb.length; i += 4) {
     const red = rgb[i];
     const green = rgb[i + 1];
     const blue = rgb[i + 2];
@@ -90,18 +81,23 @@ function toDeuteranomaly(oneImage, srcImage) {
     rgb[i + 2] = newBlue;
   }
 
-  //https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/putImageData
-  //to apply the changes to the images and such
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-
   //putImageData(imageData, dx, dy)
   //apply changes to image
-  ctx.putImageData(oneImage, 0, 0);
+  context.putImageData(grabCanvas, 0, 0);
+
+  srcImage.onload = function () {
+    //fails without try-catch because image has not loaded
+    try {
+      context.drawImage(srcImage, 0, 0);
+    } catch (e) {
+      console.error("error", e);
+    }
+
+  };
 
   //https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toDataURL
   //apply changes to page
-  srcImage.src = canvas.toDataURL();
+  srcImage.src = draw.toDataURL();
 }
 
 /* ******************************************************************************************
@@ -110,7 +106,78 @@ function toDeuteranomaly(oneImage, srcImage) {
 
 ********************************************************************************************* */
 
+/* ******************************************************************************************
 
+  Protanomaly Simulator
+
+********************************************************************************************* */
+
+function applyProtanomaly() {
+  const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
+
+  for (let i = 0; i < filterImages.length; i++) {
+    const oneImage = filterImages[i];
+
+    oneImage.crossOrigin = "Anonymous";
+
+    toProtanomaly(oneImage);
+
+  }
+}
+
+function toProtanomaly(srcImage) {
+
+  const draw = document.createElement("canvas");
+
+  draw.width = srcImage.naturalWidth;
+  draw.height = srcImage.naturalHeight;
+
+  if (draw.width == 0 || draw.height == 0) {
+    return;
+  }
+
+  const context = draw.getContext("2d");
+
+  context.drawImage(srcImage, 0, 0);
+
+  const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
+
+  var rgb = grabCanvas.data;
+
+  for (let i = 0; i < rgb.length; i += 4) {
+    const red = rgb[i];
+    const green = rgb[i + 1];
+    const blue = rgb[i + 2];
+
+    const newRed = 1.152286 * red + 1.052583 * green + -0.204868 * blue;
+    const newGreen = 0.114503 * red + 0.786281 * green + 0.099216 * blue;
+    const newBlue = -0.003882 * red + -0.048116 * green + 1.051998 * blue;
+
+    rgb[i] = newRed;
+    rgb[i + 1] = newGreen;
+    rgb[i + 2] = newBlue;
+  }
+
+  context.putImageData(grabCanvas, 0, 0);
+
+  srcImage.onload = function () {
+    try {
+      context.drawImage(srcImage, 0, 0);
+    } catch (e) {
+      console.error("error", e);
+    }
+
+  };
+
+  srcImage.src = draw.toDataURL();
+
+}
+
+/* ******************************************************************************************
+
+  End of Protanomaly Simulator
+
+********************************************************************************************* */
 
 /* doesnt work anymore, need to find a way to remove 
     or just work on other buttons
