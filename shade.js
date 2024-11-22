@@ -7,13 +7,10 @@ let bg = false;
 chrome.runtime.onMessage.addListener(
 
   function (request, sender, sendResponse) {
-    if (request.thisOne === "applyDeuteranomaly") {
-        applyDeuteranomaly();
+    if (request.simulation === "deuteranomaly") {
+      applyDeuteranomaly();
     }
-    if (request.thisOne === "applyProtanomaly") {
-      applyProtanomaly();
-    }
-    if (request.makeDark === "darkdark") {
+    if (request.darkMode === true) {
       if (bg){
         document.body.style.backgroundColor = "transparent";
         bg = false;
