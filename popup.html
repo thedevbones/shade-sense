@@ -13,11 +13,32 @@
 </head>
 
 <body>
-    <!-- from proposal: deuteranomaly, protanomaly, and tritanomaly -->
-    <button id="deuteranomaly"> Simulate Deuteranomaly</button>
-    <button id="protanomaly"> Simulate Protanomaly</button>
-    <button id="tritanomaly"> Simulate Tritanomaly</button>
-    <button id="darkMode"> Dark</button>
+    <div>
+        <!-- from proposal: deuteranomaly, protanomaly, and tritanomaly simulation -->
+        <div id="simulation">
+            <h2>Simulation</h2>
+            <label><input type="radio" name="simulation" id="noneSim"> None</label><br>
+            <label><input type="radio" name="simulation" id="deuteranomalySim"> Deuteranomaly</label><br>
+            <label><input type="radio" name="simulation" id="protanomalySim"> Protanomaly</label><br>
+            <label><input type="radio" name="simulation" id="tritanomalySim"> Tritanomaly</label><br>
+            <label for="simulatorStrength">Simulator Strength:</label>
+            <input type="range" id="simulatorStrength" name="simulatorStrength" min="0" max="100">
+        </div>
+        <!-- from proposal: deuteranomaly, protanomaly, and tritanomaly correction -->
+        <div id="daltonize">
+            <h2>Daltonize</h2>
+            <label><input type="radio" name="daltonize" id="noneDal"> None</label><br>
+            <label><input type="radio" name="daltonize" id="deuteranomalyDal"> Deuteranomaly</label><br>
+            <label><input type="radio" name="daltonize" id="protanomalyDal"> Protanomaly</label><br>
+            <label><input type="radio" name="daltonize" id="tritanomalyDal"> Tritanomaly</label><br>
+            <label for="daltonizationStrength">Daltonization Strength:</label>
+            <input type="range" id="daltonizationStrength" name="daltonizationStrength" min="0" max="100">
+        </div>
+
+        <label><input type="checkbox" id="imageOnly"> Image Only</label><br>
+        <label><input type="checkbox" id="darkMode"> Dark Mode</label>
+    </div>
+    <br>
 
     <!--color picker for selecting the custom overlay color by the user-->
     <input type="color" id="colorPicker" title="Pick a custom overlay color"> 
