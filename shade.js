@@ -7,6 +7,9 @@ chrome.runtime.onMessage.addListener(
     if (request.simulation === "protanomaly") {
       applyProtanomaly();
     }
+    if (request.simulation === "tritanomaly") {
+      applyTritanomaly();
+    }
   }
 );
 
@@ -149,6 +152,7 @@ function toProtanomaly(srcImage) {
     const green = rgb[i + 1];
     const blue = rgb[i + 2];
 
+    //0.152286 added 1 to see difference
     const newRed = 1.152286 * red + 1.052583 * green + -0.204868 * blue;
     const newGreen = 0.114503 * red + 0.786281 * green + 0.099216 * blue;
     const newBlue = -0.003882 * red + -0.048116 * green + 1.051998 * blue;
@@ -179,13 +183,75 @@ function toProtanomaly(srcImage) {
 
 ********************************************************************************************* */
 
-/* doesnt work anymore, need to find a way to remove 
-    or just work on other buttons
-*/
+/* ******************************************************************************************
 
-function removeColor() {
-  const filterImage = document.querySelectorAll("img, video, canvas, svg, iframe, object");
-  for (let i = 0; i < filterImage.length; i++) {
-    filterImage[i].style.filter = "none";
+  Tritanomaly Simulator
+
+********************************************************************************************* */
+
+function applyTritanomaly() {
+  const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
+
+  for (let i = 0; i < filterImages.length; i++) {
+    const oneImage = filterImages[i];
+
+    oneImage.crossOrigin = "Anonymous";
+
+    toTritanomaly(oneImage);
+
   }
 }
+
+function toTritanomaly(srcImage) {
+
+  const draw = document.createElement("canvas");
+
+  draw.width = srcImage.naturalWidth;
+  draw.height = srcImage.naturalHeight;
+
+  if (draw.width == 0 || draw.height == 0) {
+    return;
+  }
+
+  const context = draw.getContext("2d");
+
+  context.drawImage(srcImage, 0, 0);
+
+  const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
+
+  var rgb = grabCanvas.data;
+
+  for (let i = 0; i < rgb.length; i += 4) {
+    const red = rgb[i];
+    const green = rgb[i + 1];
+    const blue = rgb[i + 2];
+
+    const newRed = 1.255528 * red + -0.076749 * green + -0.178779 * blue;
+    const newGreen = -0.078411 * red + 0.930809 * green + 0.147602 * blue;
+    const newBlue = 0.004733 * red + 0.691367 * green + 0.303900 * blue;
+
+    rgb[i] = newRed;
+    rgb[i + 1] = newGreen;
+    rgb[i + 2] = newBlue;
+  }
+
+  context.putImageData(grabCanvas, 0, 0);
+
+  srcImage.onload = function () {
+    try {
+      context.drawImage(srcImage, 0, 0);
+    } catch (e) {
+      console.error("error", e);
+    }
+
+  };
+
+  srcImage.src = draw.toDataURL();
+
+}
+
+/* ******************************************************************************************
+
+  End of Tritanomaly Simulator
+
+********************************************************************************************* */
