@@ -53,9 +53,18 @@ function toDeuteranomaly(srcImage) {
     return;
   }
 
-  const context = draw.getContext("2d");
 
-  context.drawImage(srcImage, 0, 0);
+  if (srcImage.origImage == undefined) {
+    srcImage.origImage = document.createElement("canvas");
+    srcImage.origImage.width = srcImage.naturalWidth;
+    srcImage.origImage.height = srcImage.naturalHeight;
+    const ctx = srcImage.origImage.getContext("2d");
+    ctx.drawImage(srcImage, 0, 0);
+  }
+
+  const context = draw.getContext("2d");
+  context.drawImage(srcImage.origImage, 0, 0);
+
 
   const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
 
@@ -148,13 +157,21 @@ function toProtanomaly(srcImage) {
     return;
   }
 
-  const context = draw.getContext("2d");
+  if (srcImage.origImage == undefined) {
+    srcImage.origImage = document.createElement("canvas");
+    srcImage.origImage.width = srcImage.naturalWidth;
+    srcImage.origImage.height = srcImage.naturalHeight;
+    const ctx = srcImage.origImage.getContext("2d");
+    ctx.drawImage(srcImage, 0, 0);
+  }
 
-  context.drawImage(srcImage, 0, 0);
+  const context = draw.getContext("2d");
+  context.drawImage(srcImage.origImage, 0, 0);
+
 
   const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
 
-  var rgb = grabCanvas.data;
+  let rgb = grabCanvas.data;
 
   for (let i = 0; i < rgb.length; i += 4) {
     const red = rgb[i];
@@ -222,13 +239,21 @@ function toTritanomaly(srcImage) {
     return;
   }
 
-  const context = draw.getContext("2d");
+  if (srcImage.origImage == undefined) {
+    srcImage.origImage = document.createElement("canvas");
+    srcImage.origImage.width = srcImage.naturalWidth;
+    srcImage.origImage.height = srcImage.naturalHeight;
+    const ctx = srcImage.origImage.getContext("2d");
+    ctx.drawImage(srcImage, 0, 0);
+  }
 
-  context.drawImage(srcImage, 0, 0);
+  const context = draw.getContext("2d");
+  context.drawImage(srcImage.origImage, 0, 0);
+
 
   const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
 
-  var rgb = grabCanvas.data;
+  let rgb = grabCanvas.data;
 
   for (let i = 0; i < rgb.length; i += 4) {
     const red = rgb[i];
