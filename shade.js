@@ -309,10 +309,12 @@ function applyDaltonization(num) {
   }
 }
 
+//https://stacks.stanford.edu/file/druid:yj296hj2790/Woods_Assisting_Color_Blind_Viewers.pdf
 const deuteranomaly = [1.0, 0.0, 0.0, 0.494207, 0.0, 1.24827, 0.0, 0.0, 1.0];
 const protanomaly = [0.0, 2.02344, -2.52581, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0];
 const tritanomaly = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, -0.395913, 0.801109, 0.0];
 
+//https://vision.psychol.cam.ac.uk/jdmollon/papers/colourmaps.pdf
 function daltonize(srcImage,toDaltonize) {
 
   if (toDaltonize == 1){
@@ -372,23 +374,18 @@ function daltonize(srcImage,toDaltonize) {
     g = (green - g);
     b = (blue - b);
 
+    //TODO: Added 1 to 0.7 and 1.0
+    //have to press prot daltonization then deuter daltonization to see effect, why?
     rr = (0.0 * r) + (0.0 * g) + (0.0 * b);
-		gg = (0.7 * r) + (1.0 * g) + (0.0 * b);
-		bb = (0.7 * r) + (0.0 * g) + (1.0 * b);
+		gg = (1.7 * r) + (2.0 * g) + (0.0 * b);
+		bb = (1.7 * r) + (0.0 * g) + (2.0 * b);
     r = rr + red;
     g = gg + green;
     b = bb + blue;
 
-    if(r < 0) r = 0;
-		if(r > 255) r = 255;
-		if(g < 0) g = 0;
-		if(g > 255) g = 255;
-		if(b < 0) b = 0;
-		if(b > 255) b = 255;
-
-    rgb[i] = r >> 0;
-    rgb[i + 1] = g >> 0;
-    rgb[i + 2] = b >> 0;
+    rgb[i] = Math.min(255, Math.max(0, r));
+    rgb[i + 1] = Math.min(255, Math.max(0, g));
+    rgb[i + 2] = Math.min(255, Math.max(0, b));
   }
 
   context.putImageData(grabCanvas, 0, 0);
