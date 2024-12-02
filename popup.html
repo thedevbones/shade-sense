@@ -9,6 +9,12 @@
             font-size: 16px;
             width: 100px;
         }
+
+        #deutButtons,
+        #protButtons,
+        #tritButtons {
+            display: flex;
+        }
     </style>
 </head>
 
@@ -19,11 +25,51 @@
             <h2>Simulation</h2>
             <label><input type="radio" name="simulation" id="noneSim"> None</label><br>
             <label><input type="radio" name="simulation" id="deuteranomalySim"> Deuteranomaly</label><br>
+            <div id="deutButtons">
+                <button id="deutZeroB"> 0 </button>
+                <button id="deutOneB"> 1 </button>
+                <button id="deutTwoB"> 2 </button>
+                <button id="deutThreeB"> 3 </button>
+                <button id="deutFourB"> 4 </button>
+                <button id="deutFiveB"> 5 </button>
+                <button id="deutSixB"> 6 </button>
+                <button id="deutSevenB"> 7 </button>
+                <button id="deutEightB"> 8 </button>
+                <button id="deutNineB"> 9 </button>
+                <button id="deutTenB"> 10 </button>
+            </div>
             <label><input type="radio" name="simulation" id="protanomalySim"> Protanomaly</label><br>
+            <div id="protButtons">
+                <button id="protZeroB"> 0 </button>
+                <button id="protOneB"> 1 </button>
+                <button id="protTwoB"> 2 </button>
+                <button id="protThreeB"> 3 </button>
+                <button id="protFourB"> 4 </button>
+                <button id="protFiveB"> 5 </button>
+                <button id="protSixB"> 6 </button>
+                <button id="protSevenB"> 7 </button>
+                <button id="protEightB"> 8 </button>
+                <button id="protNineB"> 9 </button>
+                <button id="protTenB"> 10 </button>
+            </div>
             <label><input type="radio" name="simulation" id="tritanomalySim"> Tritanomaly</label><br>
-            <label for="simulatorStrength">Simulator Strength:</label>
-            <input type="range" id="simulatorStrength" name="simulatorStrength" min="0" max="100">
+            <div id="tritButtons">
+                <button id="tritZeroB"> 0 </button>
+                <button id="tritOneB"> 1 </button>
+                <button id="tritTwoB"> 2 </button>
+                <button id="tritThreeB"> 3 </button>
+                <button id="tritFourB"> 4 </button>
+                <button id="tritFiveB"> 5 </button>
+                <button id="tritSixB"> 6 </button>
+                <button id="tritSevenB"> 7 </button>
+                <button id="tritEightB"> 8 </button>
+                <button id="tritNineB"> 9 </button>
+                <button id="tritTenB"> 10 </button>
+            </div>
+            <!-- <label for="simulatorStrength">Simulator Strength:</label>
+            <input type="range" id="simulatorStrength" name="simulatorStrength" min="0" max="100"> -->
         </div>
+
         <!-- from proposal: deuteranomaly, protanomaly, and tritanomaly correction -->
         <div id="daltonize">
             <h2>Daltonize</h2>
@@ -35,9 +81,13 @@
             <input type="range" id="daltonizationStrength" name="daltonizationStrength" min="0" max="100">
         </div>
 
-        <label><input type="checkbox" id="imageOnly"> Image Only</label><br>
+        <!-- <label><input type="checkbox" id="imageOnly"> Image Only</label><br>
+        <label><input type="checkbox" id="darkMode"> Dark Mode</label> -->
     </div>
     <br>
+
+    <!-- color picker for selecting the custom overlay color by the user
+    <input type="color" id="colorPicker" title="Pick a custom overlay color"> -->
 
     <script src="popup.js"></script>
 </body>
