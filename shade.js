@@ -1,15 +1,39 @@
+var typeCB;
+
 chrome.runtime.onMessage.addListener(
 
   function (request, sender, sendResponse) {
+
+    if(request.simulation === "none"){
+      applyDeuteranomaly(0);
+    }
+
+    var num = request.simulatorStrength;
+
     if (request.simulation === "deuteranomaly") {
+      typeCB = "deuteranomaly";
       applyDeuteranomaly(10);
     }
     if (request.simulation === "protanomaly") {
+      typeCB = "protanomaly";
       applyProtanomaly(10);
     }
     if (request.simulation === "tritanomaly") {
+      typeCB = "tritanomaly";
       applyTritanomaly(10);
     }
+
+    if (num) {
+      var x = Number(num);
+      if (typeCB == "deuteranomaly") {
+        applyDeuteranomaly(x);
+      } else if (typeCB == "protanomaly") {
+        applyProtanomaly(x);
+      } else {
+        applyTritanomaly(x);
+      }
+    }
+
     if (request.daltonize === "deuteranomaly") {
       applyDaltonization(1);
     }
@@ -20,112 +44,6 @@ chrome.runtime.onMessage.addListener(
       applyDaltonization(3);
     }
 
-    //Deut strength
-    if (request.deutSimulation === "deutZero") {
-      applyDeuteranomaly(0);
-    }
-    if (request.deutSimulation === "deutOne") {
-      applyDeuteranomaly(1);
-    }
-    if (request.deutSimulation === "deutTwo") {
-      applyDeuteranomaly(2);
-    }
-    if (request.deutSimulation === "deutThree") {
-      applyDeuteranomaly(3);
-    }
-    if (request.deutSimulation === "deutFour") {
-      applyDeuteranomaly(4);
-    }
-    if (request.deutSimulation === "deutFive") {
-      applyDeuteranomaly(5);
-    }
-    if (request.deutSimulation === "deutSix") {
-      applyDeuteranomaly(6);
-    }
-    if (request.deutSimulation === "deutSeven") {
-      applyDeuteranomaly(7);
-    }
-    if (request.deutSimulation === "deutEight") {
-      applyDeuteranomaly(8);
-    }
-    if (request.deutSimulation === "deutNine") {
-      applyDeuteranomaly(9);
-    }
-    if (request.deutSimulation === "deutTen") {
-      applyDeuteranomaly(10);
-    }
-
-
-    //Prot strength
-    if (request.protSimulation === "protZero") {
-      applyProtanomaly(0);
-    }
-    if (request.protSimulation === "protOne") {
-      applyProtanomaly(1);
-    }
-    if (request.protSimulation === "protTwo") {
-      applyProtanomaly(2);
-    }
-    if (request.protSimulation === "protThree") {
-      applyProtanomaly(3);
-    }
-    if (request.protSimulation === "protFour") {
-      applyProtanomaly(4);
-    }
-    if (request.protSimulation === "protFive") {
-      applyProtanomaly(5);
-    }
-    if (request.protSimulation === "protSix") {
-      applyProtanomaly(6);
-    }
-    if (request.protSimulation === "protSeven") {
-      applyProtanomaly(7);
-    }
-    if (request.protSimulation === "protEight") {
-      applyProtanomaly(8);
-    }
-    if (request.protSimulation === "protNine") {
-      applyProtanomaly(9);
-    }
-    if (request.protSimulation === "protTen") {
-      applyProtanomaly(10);
-    }
-
-
-    //Trit strength
-    if (request.tritSimulation === "tritZero") {
-      applyTritanomaly(0);
-    }
-    if (request.tritSimulation === "tritOne") {
-      applyTritanomaly(1);
-    }
-    if (request.tritSimulation === "tritTwo") {
-      applyTritanomaly(2);
-    }
-    if (request.tritSimulation === "tritThree") {
-      applyTritanomaly(3);
-    }
-    if (request.tritSimulation === "tritFour") {
-      applyTritanomaly(4);
-    }
-    if (request.tritSimulation === "tritFive") {
-      applyTritanomaly(5);
-    }
-    if (request.tritSimulation === "tritSix") {
-      applyTritanomaly(6);
-    }
-    if (request.tritSimulation === "tritSeven") {
-      applyTritanomaly(7);
-    }
-    if (request.tritSimulation === "tritEight") {
-      applyTritanomaly(8);
-    }
-    if (request.tritSimulation === "tritNine") {
-      applyTritanomaly(9);
-    }
-    if (request.tritSimulation === "tritTen") {
-      applyTritanomaly(10);
-    }
   }
 );
 
@@ -643,7 +561,7 @@ function daltonize(srcImage, toDaltonize) {
     rr = (0.0 * r) + (0.0 * g) + (0.0 * b);
     gg = (1.2 * r) + (1.5 * g) + (0.0 * b);
     bb = (1.2 * r) + (0.0 * g) + (1.0 * b);
-    
+
     r = rr + red;
     g = gg + green;
     b = bb + blue;
