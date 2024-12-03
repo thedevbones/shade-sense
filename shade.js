@@ -1,4 +1,5 @@
-var typeCB;
+var simType;
+var dalType;
 
 chrome.runtime.onMessage.addListener(
 
@@ -11,46 +12,62 @@ chrome.runtime.onMessage.addListener(
       applyDaltonization(0);
     }
 
-    var num = request.simulatorStrength;
+    var simNum = request.simulatorStrength;
 
     if (request.simulation === "deuteranomaly") {
-      typeCB = "deuteranomaly";
+      simType = "deuteranomaly";
       applySimulation(1, 10);
     }
     if (request.simulation === "protanomaly") {
-      typeCB = "protanomaly";
+      simType = "protanomaly";
       applySimulation(2, 10);
     }
     if (request.simulation === "tritanomaly") {
-      typeCB = "tritanomaly";
+      simType = "tritanomaly";
       applySimulation(3, 10);
     }
 
-    if (num) {
-      var x = Number(num);
-      if (typeCB == "deuteranomaly") {
-        applySimulation(1, x);
-      } else if (typeCB == "protanomaly") {
-        applySimulation(2, x);
+    if (simNum) {
+      var simStr = Number(simNum);
+      if (simType == "deuteranomaly") {
+        applySimulation(1, simStr);
+      } else if (simType == "protanomaly") {
+        applySimulation(2, simStr);
       } else {
-        applySimulation(3, x);
+        applySimulation(3, simStr);
       }
     }
 
+    var daltNum = request.daltonizationStrength;
+
     if (request.daltonize === "deuteranomaly") {
-      applyDaltonization(1);
+      dalType = "deuteranomaly";
+      applyDaltonization(1, 5);
     }
     if (request.daltonize === "protanomaly") {
-      applyDaltonization(2);
+      dalType = "protanomaly";
+      applyDaltonization(2, 5);
     }
     if (request.daltonize === "tritanomaly") {
-      applyDaltonization(3);
+      dalType = "tritanomaly";
+      applyDaltonization(3, 5);
+    }
+
+    if (daltNum) {
+      var daltStr = Number(daltNum);
+      if (simType == "deuteranomaly") {
+        applyDaltonization(1, daltStr);
+      } else if (simType == "protanomaly") {
+        applyDaltonization(2, daltStr);
+      } else {
+        applyDaltonization(3, daltStr);
+      }
     }
 
   }
 );
 
-function valStrength(num, val) {
+function simStrength(type, val) {
   const arrs = {
     1: [
       [1.000000, 0.000000, -0.000000, 0.000000, 1.000000, 0.000000, -0.000000, -0.000000, 1.000000],
@@ -93,7 +110,7 @@ function valStrength(num, val) {
     ]
   };
 
-  return arrs[num][val];
+  return arrs[type][val];
 }
 
 /* ******************************************************************************************
@@ -103,75 +120,67 @@ function valStrength(num, val) {
 ********************************************************************************************* */
 
 function applySimulation(type, val) {
-  var arr = valStrength(type, val);
+  var simStrArr = simStrength(type, val);
 
-  //https://www.inf.ufrgs.br/~oliveira/pubs_files/CVD_Simulation/CVD_Simulation.html
   const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
 
   for (let i = 0; i < filterImages.length; i++) {
     const oneImage = filterImages[i];
-
-    //https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image
     oneImage.crossOrigin = "Anonymous";
-
-    toSimulation(oneImage, arr);
+    toSimulation(oneImage, simStrArr);
   }
 }
 
 function toSimulation(srcImage, arr) {
-    const draw = document.createElement("canvas");
-  
-    draw.width = srcImage.naturalWidth;
-    draw.height = srcImage.naturalHeight;
-  
-    if (draw.width == 0 || draw.height == 0) {
-      return;
+
+  const draw = document.createElement("canvas");
+
+  draw.width = srcImage.naturalWidth;
+  draw.height = srcImage.naturalHeight;
+
+  if (draw.width == 0 || draw.height == 0) {
+    return;
+  }
+
+  if (srcImage.origImage == undefined) {
+    srcImage.origImage = document.createElement("canvas");
+    srcImage.origImage.width = srcImage.naturalWidth;
+    srcImage.origImage.height = srcImage.naturalHeight;
+    const ctx = srcImage.origImage.getContext("2d");
+    ctx.drawImage(srcImage, 0, 0);
+  }
+
+  const context = draw.getContext("2d");
+  context.drawImage(srcImage.origImage, 0, 0);
+
+  const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
+
+  let rgb = grabCanvas.data;
+
+  for (let i = 0; i < rgb.length; i += 4) {
+    const red = rgb[i];
+    const green = rgb[i + 1];
+    const blue = rgb[i + 2];
+
+    const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
+    const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
+    const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
+
+    rgb[i] = newRed;
+    rgb[i + 1] = newGreen;
+    rgb[i + 2] = newBlue;
+  }
+
+  context.putImageData(grabCanvas, 0, 0);
+
+  srcImage.onload = function () {
+    try {
+      context.drawImage(srcImage, 0, 0);
+    } catch (e) {
+      console.error("error", e);
     }
-  
-    if (srcImage.origImage == undefined) {
-      srcImage.origImage = document.createElement("canvas");
-      srcImage.origImage.width = srcImage.naturalWidth;
-      srcImage.origImage.height = srcImage.naturalHeight;
-      const ctx = srcImage.origImage.getContext("2d");
-      ctx.drawImage(srcImage, 0, 0);
-    }
-  
-    const context = draw.getContext("2d");
-    context.drawImage(srcImage.origImage, 0, 0);
-
-    const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
-
-    let rgb = grabCanvas.data;
-
-    for (let i = 0; i < rgb.length; i += 4) {
-      const red = rgb[i];
-      const green = rgb[i + 1];
-      const blue = rgb[i + 2];
-  
-      const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
-      const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
-      const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
-  
-      rgb[i] = newRed;
-      rgb[i + 1] = newGreen;
-      rgb[i + 2] = newBlue;
-    }
-
-    //apply changes to image
-    context.putImageData(grabCanvas, 0, 0);
-
-    srcImage.onload = function () {
-      //fails without try-catch because image has not loaded
-      try {
-        context.drawImage(srcImage, 0, 0);
-      } catch (e) {
-        console.error("error", e);
-      }
-    };
-
-    //https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toDataURL
-    //apply changes to page
-    srcImage.src = draw.toDataURL();
+  };
+  srcImage.src = draw.toDataURL();
 }
 
 /* ******************************************************************************************
@@ -180,39 +189,36 @@ Daltonize
 
 ********************************************************************************************* */
 
-function applyDaltonization(num) {
+function applyDaltonization(type, val) {
+
   const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
 
   for (let i = 0; i < filterImages.length; i++) {
     const oneImage = filterImages[i];
-
     oneImage.crossOrigin = "Anonymous";
-
-    daltonize(oneImage, num);
+    daltonize(oneImage, type, val);
 
   }
 }
 
-//https://stacks.stanford.edu/file/druid:yj296hj2790/Woods_Assisting_Color_Blind_Viewers.pdf
 const normal = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0];
 const deuteranomaly = [1.0, 0.0, 0.0, 0.494207, 0.0, 1.24827, 0.0, 0.0, 1.0];
 const protanomaly = [0.0, 2.02344, -2.52581, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0];
 const tritanomaly = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, -0.395913, 0.801109, 0.0];
 
-//https://vision.psychol.cam.ac.uk/jdmollon/papers/colourmaps.pdf
-function daltonize(srcImage, toDaltonize) {
+function daltonize(srcImage, type, val) {
+  dalStrArr = [0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.5, 1.6, 1.8, 2.0];
+  dalStr = dalStrArr[val];
 
-  if (toDaltonize == 0) {
-    toDaltonize = normal;
-  } else if (toDaltonize == 1) {
-    toDaltonize = deuteranomaly;
-  } else if (toDaltonize == 2) {
-    toDaltonize = protanomaly;
+  if (type == 0) {
+    type = normal;
+  } else if (type == 1) {
+    type = deuteranomaly;
+  } else if (type == 2) {
+    type = protanomaly;
   } else {
-    toDaltonize = tritanomaly;
+    type = tritanomaly;
   }
-
-  //console.log(toDaltonize);
 
   const draw = document.createElement("canvas");
 
@@ -250,9 +256,9 @@ function daltonize(srcImage, toDaltonize) {
     L = (17.8824 * red) + (43.5161 * green) + (4.11935 * blue);
     M = (3.45565 * red) + (27.1554 * green) + (3.86714 * blue);
     S = (0.0299566 * red) + (0.184309 * green) + (1.46709 * blue);
-    simL = (toDaltonize[0] * L) + (toDaltonize[1] * M) + (toDaltonize[2] * S);
-    simM = (toDaltonize[3] * L) + (toDaltonize[4] * M) + (toDaltonize[5] * S);
-    simS = (toDaltonize[6] * L) + (toDaltonize[7] * M) + (toDaltonize[8] * S);
+    simL = (type[0] * L) + (type[1] * M) + (type[2] * S);
+    simM = (type[3] * L) + (type[4] * M) + (type[5] * S);
+    simS = (type[6] * L) + (type[7] * M) + (type[8] * S);
 
     r = (0.0809444479 * simL) + (-0.130504409 * simM) + (0.116721066 * simS);
     g = (-0.0102485335 * simL) + (0.0540193266 * simM) + (-0.113614708 * simS);
@@ -261,18 +267,11 @@ function daltonize(srcImage, toDaltonize) {
     g = (green - g);
     b = (blue - b);
 
-    /*
-    TODO: ORIGINAL VALUES
-    rr = (0.0 * r) + (0.0 * g) + (0.0 * b);
-    gg = (0.7 * r) + (1.0 * g) + (0.0 * b);
-    bb = (0.7 * r) + (0.0 * g) + (1.0 * b);
-    */
 
-    //TODO: Added 0.5 to r to 0.5 to g and 0 to b
-    //have to press prot daltonization then deuter daltonization to see effect, why?
+    //ORIGINAL VALUES
     rr = (0.0 * r) + (0.0 * g) + (0.0 * b);
-    gg = (1.2 * r) + (1.5 * g) + (0.0 * b);
-    bb = (1.2 * r) + (0.0 * g) + (1.0 * b);
+    gg = (0.7 * r) * dalStr + (1.0 * g) * dalStr + (0.0 * b);
+    bb = (0.7 * r) * dalStr + (0.0 * g) + (1.0 * b) * dalStr;
 
     r = rr + red;
     g = gg + green;
