@@ -111,11 +111,11 @@ function applySimulation(type, val) {
     //https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image
     oneImage.crossOrigin = "Anonymous";
 
-    toSimulation(type, oneImage, arr);
+    toSimulation(oneImage, arr);
   }
 }
 
-function toSimulation(type, srcImage, arr) {
+function toSimulation(srcImage, arr) {
     const draw = document.createElement("canvas");
   
     draw.width = srcImage.naturalWidth;
@@ -140,54 +140,18 @@ function toSimulation(type, srcImage, arr) {
 
     let rgb = grabCanvas.data;
 
-    if (type == 1) {
-      for (let i = 0; i < rgb.length; i += 4) {
-        const red = rgb[i];
-        const green = rgb[i + 1];
-        const blue = rgb[i + 2];
-    
-        /*
-        //https://www.geeksforgeeks.org/how-to-multiply-a-3-x-3-matrix-with-a-3-x-1-matrix/
-        const newRed = 0.367322 * red + 0.860646 * green + -0.227968 * blue;
-        const newGreen = 0.280085 * red + 0.672501 * green + 0.047413 * blue;
-        const newBlue = -0.011820 * red + 0.042940 * green + 0.968881 * blue;
-        */
-        const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
-        const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
-        const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
-    
-        rgb[i] = newRed;
-        rgb[i + 1] = newGreen;
-        rgb[i + 2] = newBlue;
-      }
-    } else if (type == 2) {
-      for (let i = 0; i < rgb.length; i += 4) {
-        const red = rgb[i];
-        const green = rgb[i + 1];
-        const blue = rgb[i + 2];
-    
-        const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
-        const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
-        const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
-    
-        rgb[i] = newRed;
-        rgb[i + 1] = newGreen;
-        rgb[i + 2] = newBlue;
-      }
-    } else {
-      for (let i = 0; i < rgb.length; i += 4) {
-        const red = rgb[i];
-        const green = rgb[i + 1];
-        const blue = rgb[i + 2];
-    
-        const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
-        const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
-        const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
-    
-        rgb[i] = newRed;
-        rgb[i + 1] = newGreen;
-        rgb[i + 2] = newBlue;
-      }
+    for (let i = 0; i < rgb.length; i += 4) {
+      const red = rgb[i];
+      const green = rgb[i + 1];
+      const blue = rgb[i + 2];
+  
+      const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
+      const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
+      const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
+  
+      rgb[i] = newRed;
+      rgb[i + 1] = newGreen;
+      rgb[i + 2] = newBlue;
     }
 
     //apply changes to image
