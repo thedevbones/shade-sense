@@ -1,40 +1,40 @@
-var simType;
-var dalType;
+var simType, dalType, deut = 1, prot = 2, trit = 3;
 
 chrome.runtime.onMessage.addListener(
 
   function (request) {
 
     if (request.simulation === "none") {
-      applySimulation(1, 0);
+      applySimulation(deut, 0);
     }
     if (request.daltonize === "none") {
       applyDaltonization(0);
     }
 
     var simNum = request.simulatorStrength;
+    console.log(simNum)
 
     if (request.simulation === "deuteranomaly") {
       simType = "deuteranomaly";
-      applySimulation(1, 10);
+      applySimulation(deut, 10);
     }
     if (request.simulation === "protanomaly") {
       simType = "protanomaly";
-      applySimulation(2, 10);
+      applySimulation(prot, 10);
     }
     if (request.simulation === "tritanomaly") {
       simType = "tritanomaly";
-      applySimulation(3, 10);
+      applySimulation(trit, 10);
     }
 
     if (simNum) {
       var simStr = Number(simNum);
       if (simType == "deuteranomaly") {
-        applySimulation(1, simStr);
+        applySimulation(deut, simStr);
       } else if (simType == "protanomaly") {
-        applySimulation(2, simStr);
+        applySimulation(prot, simStr);
       } else {
-        applySimulation(3, simStr);
+        applySimulation(trit, simStr);
       }
     }
 
@@ -42,25 +42,25 @@ chrome.runtime.onMessage.addListener(
 
     if (request.daltonize === "deuteranomaly") {
       dalType = "deuteranomaly";
-      applyDaltonization(1, 5);
+      applyDaltonization(deut, 5);
     }
     if (request.daltonize === "protanomaly") {
       dalType = "protanomaly";
-      applyDaltonization(2, 5);
+      applyDaltonization(prot, 5);
     }
     if (request.daltonize === "tritanomaly") {
       dalType = "tritanomaly";
-      applyDaltonization(3, 5);
+      applyDaltonization(trit, 5);
     }
 
     if (daltNum) {
       var daltStr = Number(daltNum);
       if (simType == "deuteranomaly") {
-        applyDaltonization(1, daltStr);
+        applyDaltonization(deut, daltStr);
       } else if (simType == "protanomaly") {
-        applyDaltonization(2, daltStr);
+        applyDaltonization(prot, daltStr);
       } else {
-        applyDaltonization(3, daltStr);
+        applyDaltonization(trit, daltStr);
       }
     }
   }
