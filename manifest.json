@@ -22,7 +22,7 @@
       }
     ],
     "permissions": [
-      "activeTab"
-      
+      "activeTab",
+      "storage"
     ]
   }
