@@ -12,7 +12,6 @@ chrome.runtime.onMessage.addListener(
     }
 
     var simNum = request.simulatorStrength;
-    console.log(simNum)
 
     if (request.simulation === "deuteranomaly") {
       simType = "deuteranomaly";
