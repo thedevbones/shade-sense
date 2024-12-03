@@ -7,12 +7,6 @@ chrome.runtime.onMessage.addListener(
     if (request.simulation === "none") {
       applySimulation(deut, 0);
     }
-    if (request.daltonize === "none") {
-      applyDaltonization(0);
-    }
-
-    var simNum = request.simulatorStrength;
-
     if (request.simulation === "deuteranomaly") {
       simType = "deuteranomaly";
       applySimulation(deut, 5);
@@ -26,6 +20,8 @@ chrome.runtime.onMessage.addListener(
       applySimulation(trit, 5);
     }
 
+    var simNum = request.simulatorStrength;
+
     if (simNum) {
       var simStr = Number(simNum);
       if (simType == "deuteranomaly") {
@@ -37,8 +33,9 @@ chrome.runtime.onMessage.addListener(
       }
     }
 
-    var daltNum = request.daltonizationStrength;
-
+    if (request.daltonize === "none") {
+      applyDaltonization(0);
+    }
     if (request.daltonize === "deuteranomaly") {
       dalType = "deuteranomaly";
       applyDaltonization(deut, 5);
@@ -52,6 +49,8 @@ chrome.runtime.onMessage.addListener(
       applyDaltonization(trit, 5);
     }
 
+    var daltNum = request.daltonizationStrength;
+    
     if (daltNum) {
       var daltStr = Number(daltNum);
       if (simType == "deuteranomaly") {
@@ -65,7 +64,7 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
-function simStrength(type, val) {
+function simStrength(type, str) {
 
   const arrs = {
     1: [
@@ -109,7 +108,7 @@ function simStrength(type, val) {
     ]
   };
 
-  return arrs[type][val];
+  return arrs[type][str];
 }
 
 /* ******************************************************************************************
@@ -118,9 +117,9 @@ function simStrength(type, val) {
 
 ********************************************************************************************* */
 
-function applySimulation(type, val) {
+function applySimulation(type, str) {
 
-  var simStrArr = simStrength(type, val);
+  var simStrArr = simStrength(type, str);
 
   const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
 
@@ -131,7 +130,7 @@ function applySimulation(type, val) {
   }
 }
 
-function toSimulation(srcImage, arr) {
+function toSimulation(srcImage, simArr) {
 
   const draw = document.createElement("canvas");
 
@@ -161,9 +160,9 @@ function toSimulation(srcImage, arr) {
     const green = rgb[i + 1];
     const blue = rgb[i + 2];
 
-    const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
-    const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
-    const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
+    const newRed = simArr[0] * red + simArr[1] * green + simArr[2] * blue;
+    const newGreen = simArr[3] * red + simArr[4] * green + simArr[5] * blue;
+    const newBlue = simArr[6] * red + simArr[7] * green + simArr[8] * blue;
 
     rgb[i] = newRed;
     rgb[i + 1] = newGreen;
@@ -189,14 +188,14 @@ Daltonize
 
 ********************************************************************************************* */
 
-function applyDaltonization(type, val) {
+function applyDaltonization(type, str) {
 
   const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
 
   for (let i = 0; i < filterImages.length; i++) {
     const oneImage = filterImages[i];
     oneImage.crossOrigin = "Anonymous";
-    daltonize(oneImage, type, val);
+    daltonize(oneImage, type, str);
   }
 }
 
@@ -205,10 +204,10 @@ const deuteranomaly = [1.0, 0.0, 0.0, 0.494207, 0.0, 1.24827, 0.0, 0.0, 1.0];
 const protanomaly = [0.0, 2.02344, -2.52581, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0];
 const tritanomaly = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, -0.395913, 0.801109, 0.0];
 
-function daltonize(srcImage, type, val) {
+function daltonize(srcImage, type, str) {
 
   dalStrArr = [0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.5, 1.6, 1.8, 2.0];
-  dalStr = dalStrArr[val];
+  dalStr = dalStrArr[str];
 
   if (type == 0) {
     type = normal;
