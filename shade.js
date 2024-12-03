@@ -7,6 +7,9 @@ chrome.runtime.onMessage.addListener(
     if (request.simulation === "none") {
       applySimulation(1, 0);
     }
+    if (request.daltonize === "none") {
+      applyDaltonization(0);
+    }
 
     var num = request.simulatorStrength;
 
@@ -191,6 +194,7 @@ function applyDaltonization(num) {
 }
 
 //https://stacks.stanford.edu/file/druid:yj296hj2790/Woods_Assisting_Color_Blind_Viewers.pdf
+const normal = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0];
 const deuteranomaly = [1.0, 0.0, 0.0, 0.494207, 0.0, 1.24827, 0.0, 0.0, 1.0];
 const protanomaly = [0.0, 2.02344, -2.52581, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0];
 const tritanomaly = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, -0.395913, 0.801109, 0.0];
@@ -198,7 +202,9 @@ const tritanomaly = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, -0.395913, 0.801109, 0.0];
 //https://vision.psychol.cam.ac.uk/jdmollon/papers/colourmaps.pdf
 function daltonize(srcImage, toDaltonize) {
 
-  if (toDaltonize == 1) {
+  if (toDaltonize == 0) {
+    toDaltonize = normal;
+  } else if (toDaltonize == 1) {
     toDaltonize = deuteranomaly;
   } else if (toDaltonize == 2) {
     toDaltonize = protanomaly;
