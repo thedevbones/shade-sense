@@ -2,35 +2,35 @@ var typeCB;
 
 chrome.runtime.onMessage.addListener(
 
-  function (request, sender, sendResponse) {
+  function (request) {
 
     if (request.simulation === "none") {
-      applyDeuteranomaly(0);
+      applySimulation(1, 0);
     }
 
     var num = request.simulatorStrength;
 
     if (request.simulation === "deuteranomaly") {
       typeCB = "deuteranomaly";
-      applyDeuteranomaly(10);
+      applySimulation(1, 10);
     }
     if (request.simulation === "protanomaly") {
       typeCB = "protanomaly";
-      applyProtanomaly(10);
+      applySimulation(2, 10);
     }
     if (request.simulation === "tritanomaly") {
       typeCB = "tritanomaly";
-      applyTritanomaly(10);
+      applySimulation(3, 10);
     }
 
     if (num) {
       var x = Number(num);
       if (typeCB == "deuteranomaly") {
-        applyDeuteranomaly(x);
+        applySimulation(1, x);
       } else if (typeCB == "protanomaly") {
-        applyProtanomaly(x);
+        applySimulation(2, x);
       } else {
-        applyTritanomaly(x);
+        applySimulation(3, x);
       }
     }
 
@@ -95,279 +95,117 @@ function valStrength(num, val) {
 
 /* ******************************************************************************************
 
-  Deuteranomaly Simulator
+  Simulation
 
 ********************************************************************************************* */
 
-function applyDeuteranomaly(val) {
-  var arr = valStrength(1, val);
+function applySimulation(type, val) {
+  var arr = valStrength(type, val);
 
   //https://www.inf.ufrgs.br/~oliveira/pubs_files/CVD_Simulation/CVD_Simulation.html
-
   const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
 
   for (let i = 0; i < filterImages.length; i++) {
     const oneImage = filterImages[i];
 
     //https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image
-    //because of cors error
     oneImage.crossOrigin = "Anonymous";
 
-    toDeuteranomaly(oneImage, arr);
+    toSimulation(type, oneImage, arr);
   }
 }
 
-function toDeuteranomaly(srcImage, arr) {
+function toSimulation(type, srcImage, arr) {
+    const draw = document.createElement("canvas");
+  
+    draw.width = srcImage.naturalWidth;
+    draw.height = srcImage.naturalHeight;
+  
+    if (draw.width == 0 || draw.height == 0) {
+      return;
+    }
+  
+    if (srcImage.origImage == undefined) {
+      srcImage.origImage = document.createElement("canvas");
+      srcImage.origImage.width = srcImage.naturalWidth;
+      srcImage.origImage.height = srcImage.naturalHeight;
+      const ctx = srcImage.origImage.getContext("2d");
+      ctx.drawImage(srcImage, 0, 0);
+    }
+  
+    const context = draw.getContext("2d");
+    context.drawImage(srcImage.origImage, 0, 0);
 
-  const draw = document.createElement("canvas");
+    const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
 
-  draw.width = srcImage.naturalWidth;
-  draw.height = srcImage.naturalHeight;
+    let rgb = grabCanvas.data;
 
-  if (draw.width == 0 || draw.height == 0) {
-    return;
-  }
-
-
-  if (srcImage.origImage == undefined) {
-    srcImage.origImage = document.createElement("canvas");
-    srcImage.origImage.width = srcImage.naturalWidth;
-    srcImage.origImage.height = srcImage.naturalHeight;
-    const ctx = srcImage.origImage.getContext("2d");
-    ctx.drawImage(srcImage, 0, 0);
-  }
-
-  const context = draw.getContext("2d");
-  context.drawImage(srcImage.origImage, 0, 0);
-
-
-  const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
-
-  let rgb = grabCanvas.data;
-
-  /*
-  const deuterMatrix = {
-    deuter: [
-      0.367322, 0.860646, -0.227968,
-      0.280085, 0.672501, 0.047413,
-      -0.011820, 0.042940, 0.968881
-    ]
-  };*/
-
-  //https://medium.com/@bantic/hand-coding-a-color-wheel-with-canvas-78256c9d7d43
-  //every 4th pixels for "full alpha", alpha channel
-  for (let i = 0; i < rgb.length; i += 4) {
-    const red = rgb[i];
-    const green = rgb[i + 1];
-    const blue = rgb[i + 2];
-
-    /*
-    //https://www.geeksforgeeks.org/how-to-multiply-a-3-x-3-matrix-with-a-3-x-1-matrix/
-    const newRed = 0.367322 * red + 0.860646 * green + -0.227968 * blue;
-    const newGreen = 0.280085 * red + 0.672501 * green + 0.047413 * blue;
-    const newBlue = -0.011820 * red + 0.042940 * green + 0.968881 * blue;
-    */
-    const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
-    const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
-    const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
-
-    rgb[i] = newRed;
-    rgb[i + 1] = newGreen;
-    rgb[i + 2] = newBlue;
-  }
-
-  //putImageData(imageData, dx, dy)
-  //apply changes to image
-  context.putImageData(grabCanvas, 0, 0);
-
-  srcImage.onload = function () {
-    //fails without try-catch because image has not loaded
-    try {
-      context.drawImage(srcImage, 0, 0);
-    } catch (e) {
-      console.error("error", e);
+    if (type == 1) {
+      for (let i = 0; i < rgb.length; i += 4) {
+        const red = rgb[i];
+        const green = rgb[i + 1];
+        const blue = rgb[i + 2];
+    
+        /*
+        //https://www.geeksforgeeks.org/how-to-multiply-a-3-x-3-matrix-with-a-3-x-1-matrix/
+        const newRed = 0.367322 * red + 0.860646 * green + -0.227968 * blue;
+        const newGreen = 0.280085 * red + 0.672501 * green + 0.047413 * blue;
+        const newBlue = -0.011820 * red + 0.042940 * green + 0.968881 * blue;
+        */
+        const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
+        const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
+        const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
+    
+        rgb[i] = newRed;
+        rgb[i + 1] = newGreen;
+        rgb[i + 2] = newBlue;
+      }
+    } else if (type == 2) {
+      for (let i = 0; i < rgb.length; i += 4) {
+        const red = rgb[i];
+        const green = rgb[i + 1];
+        const blue = rgb[i + 2];
+    
+        const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
+        const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
+        const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
+    
+        rgb[i] = newRed;
+        rgb[i + 1] = newGreen;
+        rgb[i + 2] = newBlue;
+      }
+    } else {
+      for (let i = 0; i < rgb.length; i += 4) {
+        const red = rgb[i];
+        const green = rgb[i + 1];
+        const blue = rgb[i + 2];
+    
+        const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
+        const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
+        const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
+    
+        rgb[i] = newRed;
+        rgb[i + 1] = newGreen;
+        rgb[i + 2] = newBlue;
+      }
     }
 
-  };
+    //apply changes to image
+    context.putImageData(grabCanvas, 0, 0);
 
-  //https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toDataURL
-  //apply changes to page
-  srcImage.src = draw.toDataURL();
+    srcImage.onload = function () {
+      //fails without try-catch because image has not loaded
+      try {
+        context.drawImage(srcImage, 0, 0);
+      } catch (e) {
+        console.error("error", e);
+      }
+    };
+
+    //https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toDataURL
+    //apply changes to page
+    srcImage.src = draw.toDataURL();
 }
-
-/* ******************************************************************************************
-
-  End of Deuteranomaly Simulator
-
-********************************************************************************************* */
-
-/* ******************************************************************************************
-
-  Protanomaly Simulator
-
-********************************************************************************************* */
-
-function applyProtanomaly(val) {
-
-  var arr = valStrength(2, val);
-
-  const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
-
-  for (let i = 0; i < filterImages.length; i++) {
-    const oneImage = filterImages[i];
-
-    oneImage.crossOrigin = "Anonymous";
-
-    toProtanomaly(oneImage, arr);
-
-  }
-}
-
-function toProtanomaly(srcImage, arr) {
-
-  const draw = document.createElement("canvas");
-
-  draw.width = srcImage.naturalWidth;
-  draw.height = srcImage.naturalHeight;
-
-  if (draw.width == 0 || draw.height == 0) {
-    return;
-  }
-
-  if (srcImage.origImage == undefined) {
-    srcImage.origImage = document.createElement("canvas");
-    srcImage.origImage.width = srcImage.naturalWidth;
-    srcImage.origImage.height = srcImage.naturalHeight;
-    const ctx = srcImage.origImage.getContext("2d");
-    ctx.drawImage(srcImage, 0, 0);
-  }
-
-  const context = draw.getContext("2d");
-  context.drawImage(srcImage.origImage, 0, 0);
-
-
-  const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
-
-  let rgb = grabCanvas.data;
-
-  for (let i = 0; i < rgb.length; i += 4) {
-    const red = rgb[i];
-    const green = rgb[i + 1];
-    const blue = rgb[i + 2];
-
-    const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
-    const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
-    const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
-
-    rgb[i] = newRed;
-    rgb[i + 1] = newGreen;
-    rgb[i + 2] = newBlue;
-  }
-
-  context.putImageData(grabCanvas, 0, 0);
-
-  srcImage.onload = function () {
-    try {
-      context.drawImage(srcImage, 0, 0);
-    } catch (e) {
-      console.error("error", e);
-    }
-
-  };
-
-  srcImage.src = draw.toDataURL();
-
-}
-
-/* ******************************************************************************************
-
-  End of Protanomaly Simulator
-
-********************************************************************************************* */
-
-/* ******************************************************************************************
-
-  Tritanomaly Simulator
-
-********************************************************************************************* */
-
-function applyTritanomaly(val) {
-
-  var arr = valStrength(3, val);
-
-  const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
-
-  for (let i = 0; i < filterImages.length; i++) {
-    const oneImage = filterImages[i];
-
-    oneImage.crossOrigin = "Anonymous";
-
-    toTritanomaly(oneImage, arr);
-
-  }
-}
-
-function toTritanomaly(srcImage, arr) {
-
-  const draw = document.createElement("canvas");
-
-  draw.width = srcImage.naturalWidth;
-  draw.height = srcImage.naturalHeight;
-
-  if (draw.width == 0 || draw.height == 0) {
-    return;
-  }
-
-  if (srcImage.origImage == undefined) {
-    srcImage.origImage = document.createElement("canvas");
-    srcImage.origImage.width = srcImage.naturalWidth;
-    srcImage.origImage.height = srcImage.naturalHeight;
-    const ctx = srcImage.origImage.getContext("2d");
-    ctx.drawImage(srcImage, 0, 0);
-  }
-
-  const context = draw.getContext("2d");
-  context.drawImage(srcImage.origImage, 0, 0);
-
-
-  const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
-
-  let rgb = grabCanvas.data;
-
-  for (let i = 0; i < rgb.length; i += 4) {
-    const red = rgb[i];
-    const green = rgb[i + 1];
-    const blue = rgb[i + 2];
-
-    const newRed = arr[0] * red + arr[1] * green + arr[2] * blue;
-    const newGreen = arr[3] * red + arr[4] * green + arr[5] * blue;
-    const newBlue = arr[6] * red + arr[7] * green + arr[8] * blue;
-
-    rgb[i] = newRed;
-    rgb[i + 1] = newGreen;
-    rgb[i + 2] = newBlue;
-  }
-
-  context.putImageData(grabCanvas, 0, 0);
-
-  srcImage.onload = function () {
-    try {
-      context.drawImage(srcImage, 0, 0);
-    } catch (e) {
-      console.error("error", e);
-    }
-
-  };
-
-  srcImage.src = draw.toDataURL();
-
-}
-
-/* ******************************************************************************************
-
-  End of Tritanomaly Simulator
-
-********************************************************************************************* */
 
 /* ******************************************************************************************
 
