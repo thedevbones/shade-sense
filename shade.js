@@ -15,15 +15,15 @@ chrome.runtime.onMessage.addListener(
 
     if (request.simulation === "deuteranomaly") {
       simType = "deuteranomaly";
-      applySimulation(deut, 10);
+      applySimulation(deut, 5);
     }
     if (request.simulation === "protanomaly") {
       simType = "protanomaly";
-      applySimulation(prot, 10);
+      applySimulation(prot, 5);
     }
     if (request.simulation === "tritanomaly") {
       simType = "tritanomaly";
-      applySimulation(trit, 10);
+      applySimulation(trit, 5);
     }
 
     if (simNum) {
