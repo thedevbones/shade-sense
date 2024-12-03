@@ -63,11 +63,11 @@ chrome.runtime.onMessage.addListener(
         applyDaltonization(3, daltStr);
       }
     }
-
   }
 );
 
 function simStrength(type, val) {
+
   const arrs = {
     1: [
       [1.000000, 0.000000, -0.000000, 0.000000, 1.000000, 0.000000, -0.000000, -0.000000, 1.000000],
@@ -120,6 +120,7 @@ function simStrength(type, val) {
 ********************************************************************************************* */
 
 function applySimulation(type, val) {
+
   var simStrArr = simStrength(type, val);
 
   const filterImages = document.querySelectorAll("img, video, canvas, svg, iframe, object");
@@ -154,7 +155,6 @@ function toSimulation(srcImage, arr) {
   context.drawImage(srcImage.origImage, 0, 0);
 
   const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
-
   let rgb = grabCanvas.data;
 
   for (let i = 0; i < rgb.length; i += 4) {
@@ -180,6 +180,7 @@ function toSimulation(srcImage, arr) {
       console.error("error", e);
     }
   };
+
   srcImage.src = draw.toDataURL();
 }
 
@@ -197,7 +198,6 @@ function applyDaltonization(type, val) {
     const oneImage = filterImages[i];
     oneImage.crossOrigin = "Anonymous";
     daltonize(oneImage, type, val);
-
   }
 }
 
@@ -207,6 +207,7 @@ const protanomaly = [0.0, 2.02344, -2.52581, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0];
 const tritanomaly = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, -0.395913, 0.801109, 0.0];
 
 function daltonize(srcImage, type, val) {
+
   dalStrArr = [0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.5, 1.6, 1.8, 2.0];
   dalStr = dalStrArr[val];
 
@@ -229,7 +230,6 @@ function daltonize(srcImage, type, val) {
     return;
   }
 
-
   if (srcImage.origImage == undefined) {
     srcImage.origImage = document.createElement("canvas");
     srcImage.origImage.width = srcImage.naturalWidth;
@@ -240,7 +240,6 @@ function daltonize(srcImage, type, val) {
 
   const context = draw.getContext("2d");
   context.drawImage(srcImage.origImage, 0, 0);
-
 
   const grabCanvas = context.getImageData(0, 0, draw.width, draw.height);
 
@@ -267,8 +266,6 @@ function daltonize(srcImage, type, val) {
     g = (green - g);
     b = (blue - b);
 
-
-    //ORIGINAL VALUES
     rr = (0.0 * r) + (0.0 * g) + (0.0 * b);
     gg = (0.7 * r) * dalStr + (1.0 * g) * dalStr + (0.0 * b);
     bb = (0.7 * r) * dalStr + (0.0 * g) + (1.0 * b) * dalStr;
@@ -294,5 +291,4 @@ function daltonize(srcImage, type, val) {
   };
 
   srcImage.src = draw.toDataURL();
-
 }
