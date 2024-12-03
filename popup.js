@@ -50,7 +50,7 @@ document.getElementById("daltonizationStrength").addEventListener("input", funct
 // Misc event listeners //
 ///////////////////////////
 
-document.getElementById("imageOnly").addEventListener("change", function(event) {
+/*document.getElementById("imageOnly").addEventListener("change", function(event) {
   sendMessageToActiveTab({ imageOnly: event.target.checked });
 });
 
@@ -60,7 +60,7 @@ document.getElementById("darkMode").addEventListener("change", function(event) {
 
 document.getElementById("colorPicker").addEventListener("input", function(event) {
   sendMessageToActiveTab({ overlayColor: event.target.value });
-});
+});*/
 
 // Function for sending a message to the active tab
 function sendMessageToActiveTab(message) {
