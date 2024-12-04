@@ -26,7 +26,7 @@ document.getElementById("tritanomalySim").addEventListener("click", function() {
   updateBackgroundGradient("tritanomaly");
 });
 
-document.getElementById("simulatorStrength").addEventListener("input", function(event) {
+document.getElementById("simulatorStrength").addEventListener("change", function(event) {
   saveSetting("simulatorStrength", event.target.value);
   sendMessageToActiveTab({ simulatorStrength: event.target.value });
 });
@@ -59,7 +59,7 @@ document.getElementById("tritanomalyDal").addEventListener("click", function() {
   updateBackgroundGradient("tritanomaly");
 });
 
-document.getElementById("daltonizationStrength").addEventListener("input", function(event) {
+document.getElementById("daltonizationStrength").addEventListener("change", function(event) {
   saveSetting("daltonizationStrength", event.target.value);
   sendMessageToActiveTab({ daltonizationStrength: event.target.value });
 });
