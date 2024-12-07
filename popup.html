@@ -7,13 +7,14 @@
         /* General Popup Styles */
         body {
             margin: 0;
-            padding: 10px;
+            padding: 5px;
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #ff7eb3, #ff758f, #fc6e51, #ffcd57, #7be495, #4ac3ff, #7b87ff, #b17fff);
             background-size: 200% 200%;
             animation: gradientShift 10s ease infinite;
             color: white;
             width: 400px;
+            min-height: fit-content;
             overflow: hidden;
         }
 
@@ -30,7 +31,7 @@
             display: flex;
             align-items: center;
             justify-content: start;
-            padding: 15px;
+            padding: 5px;
             background: rgba(0, 0, 0, 0.7);
             border-radius: 10px;
             margin-bottom: 15px;
@@ -38,14 +39,14 @@
         }
 
         .header img {
-            width: 50px; /* Logo size */
-            height: 50px;
+            width: 36px; /* Logo size */
+            height: 36px;
             margin-right: 15px;
         }
 
         .header h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: 18px;
             color: #ffffff;
             font-weight: bold;
         }
@@ -54,14 +55,14 @@
         .section {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 10px;
-            padding: 15px;
+            padding: 5px;
             margin-bottom: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
 
         .section h2 {
             margin-top: 0;
-            font-size: 18px;
+            font-size: 14px;
             color: #ffffff;
             border-bottom: 1px solid rgba(255, 255, 255, 0.3);
             padding-bottom: 0px;
@@ -97,8 +98,7 @@
             <label><input type="radio" name="simulation" id="deuteranomalySim"> Deuteranomaly</label><br>
             <label><input type="radio" name="simulation" id="protanomalySim"> Protanomaly</label><br>
             <label><input type="radio" name="simulation" id="tritanomalySim"> Tritanomaly</label><br>
-            <label for="simulatorStrength">Simulator Strength:</label>
-            <input type="range" id="simulatorStrength" name="simulatorStrength" min="0" max="10" step="1">
+            
         </div>
 
         <!-- from proposal: deuteranomaly, protanomaly, and tritanomaly correction -->
@@ -108,9 +108,17 @@
             <label><input type="radio" name="daltonize" id="deuteranomalyDal"> Deuteranomaly</label><br>
             <label><input type="radio" name="daltonize" id="protanomalyDal"> Protanomaly</label><br>
             <label><input type="radio" name="daltonize" id="tritanomalyDal"> Tritanomaly</label><br>
-            <label for="daltonizationStrength">Daltonization Strength:</label>
-            <input type="range" id="daltonizationStrength" name="daltonizationStrength" min="0" max="10" step="1">
+            
         </div>
+        
+        <div class="section" id="strengths">
+            <h2>Strengths</h2>
+            <label for="simulatorStrength">Simulator Strength:</label>
+            <input type="range" id="simulatorStrength" name="simulatorStrength" min="0" max="10" step="1" value="0">
+            <label for="daltonizationStrength">Daltonization Strength:</label>
+            <input type="range" id="daltonizationStrength" name="daltonizationStrength" min="0" max="10" step="1" value="0">
+        </div>
+
     </div>
     <br>
 

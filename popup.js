@@ -69,30 +69,34 @@ document.getElementById("daltonizationStrength").addEventListener("change", func
 ///////////////////////////
 
 //https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event
-
-document.addEventListener("DOMContentLoaded", function() {
-  // Just in case, was getting alot of errors
+/*  
+document.addEventListener("DOMContentLoaded", function () {
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
-    chrome.storage.sync.get(["simulation", "simulatorStrength", "daltonize", "daltonizationStrength"], function(data) {
+    chrome.storage.sync.get(["simulation", "simulatorStrength", "daltonize", "daltonizationStrength"], function (data) {
       if (data.simulation) {
         const simElement = document.getElementById(data.simulation + "Sim");
         if (simElement) simElement.checked = true;
       }
+      const simStrengthElement = document.getElementById("simulatorStrength");
       if (data.simulatorStrength !== undefined) {
-        const simStrengthElement = document.getElementById("simulatorStrength");
-        if (simStrengthElement) simStrengthElement.value = data.simulatorStrength;
+        simStrengthElement.value = data.simulatorStrength;
+      } else {
+        simStrengthElement.value = 0; // Default to 0
       }
       if (data.daltonize) {
         const dalElement = document.getElementById(data.daltonize + "Dal");
         if (dalElement) dalElement.checked = true;
       }
+      const dalStrengthElement = document.getElementById("daltonizationStrength");
       if (data.daltonizationStrength !== undefined) {
-        const dalStrengthElement = document.getElementById("daltonizationStrength");
-        if (dalStrengthElement) dalStrengthElement.value = data.daltonizationStrength;
+        dalStrengthElement.value = data.daltonizationStrength;
+      } else {
+        dalStrengthElement.value = 0; // Default to 0
       }
     });
   }
 });
+*/
 
 ///////////////////////////
 //    Handy Functions    //

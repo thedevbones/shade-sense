@@ -9,15 +9,15 @@ chrome.runtime.onMessage.addListener(
     }
     if (request.simulation === "deuteranomaly") {
       simType = "deuteranomaly";
-      applySimulation(deut, 5);
+      applySimulation(deut, 0);
     }
     if (request.simulation === "protanomaly") {
       simType = "protanomaly";
-      applySimulation(prot, 5);
+      applySimulation(prot, 0);
     }
     if (request.simulation === "tritanomaly") {
       simType = "tritanomaly";
-      applySimulation(trit, 5);
+      applySimulation(trit, 0);
     }
 
     var simNum = request.simulatorStrength;
@@ -38,15 +38,15 @@ chrome.runtime.onMessage.addListener(
     }
     if (request.daltonize === "deuteranomaly") {
       dalType = "deuteranomaly";
-      applyDaltonization(deut, 5);
+      applyDaltonization(deut, 0);
     }
     if (request.daltonize === "protanomaly") {
       dalType = "protanomaly";
-      applyDaltonization(prot, 5);
+      applyDaltonization(prot, 0);
     }
     if (request.daltonize === "tritanomaly") {
       dalType = "tritanomaly";
-      applyDaltonization(trit, 5);
+      applyDaltonization(trit, 0);
     }
 
     var daltNum = request.daltonizationStrength;
