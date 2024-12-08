@@ -50,12 +50,13 @@ chrome.runtime.onMessage.addListener(
     }
 
     var daltNum = request.daltonizationStrength;
+    console.log(daltNum + " dalt");
     
     if (daltNum) {
       var daltStr = Number(daltNum);
-      if (simType == "deuteranomaly") {
+      if (dalType == "deuteranomaly") {
         applyDaltonization(deut, daltStr);
-      } else if (simType == "protanomaly") {
+      } else if (dalType == "protanomaly") {
         applyDaltonization(prot, daltStr);
       } else {
         applyDaltonization(trit, daltStr);
