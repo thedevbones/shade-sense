@@ -2,6 +2,8 @@
 
 Shade Sense is a project aimed at improving web accessibility by providing a color correction algorithm for multiple forms of colorblindness and a simulator for web designers.
 
+![Shade Sense Screenshot](screenshot.png)
+
 ## Features
 
 - Simulation for multiple forms of colorblindness
